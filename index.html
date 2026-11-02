@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Misión FYQ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#0B1730;--p:#3685F5;--t:#20C7B5;--g:#34C78A;--o:#F3A847;--w:#F8FAFC;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:radial-gradient(circle at 20% 10%,#16336b,var(--bg) 60%);color:var(--w);font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:clamp(13px,1.35vw,19px);overflow:hidden}
+#app{height:100%;display:grid;grid-template-rows:56px 1fr 56px}
+.bar{display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.12)}
+.bar.b{border-top:1px solid rgba(255,255,255,.12);border-bottom:0;justify-content:center}
+.logo{font-weight:800;color:var(--t);letter-spacing:.5px;white-space:nowrap}.sp{flex:1}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:8px 14px;background:var(--p);color:#fff;font-weight:600}
+button:hover{filter:brightness(1.15)}button:disabled{opacity:.35;cursor:default}button:focus-visible,.fc:focus-visible{outline:3px solid var(--o)}
+.g{background:var(--g);color:#052}.o{background:var(--o);color:#321}.n{background:rgba(255,255,255,.14)}
+.tabs button{background:rgba(255,255,255,.1);border-radius:10px 10px 0 0}.tabs button.on{background:var(--t);color:#032}
+main{min-height:0;padding:10px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.two{flex:1;min-height:0;display:flex;gap:10px}.pn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;min-height:0;min-width:0;overflow:auto;backdrop-filter:blur(6px)}
+h2{margin:0 0 6px;color:var(--t);font-size:1.35em}p{margin:4px 0;line-height:1.4}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.fc{perspective:800px;height:150px;cursor:pointer}.fi{position:relative;width:100%;height:100%;transition:transform .65s;transform-style:preserve-3d}.fc.f .fi{transform:rotateY(180deg)}
+.fa,.fb{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:8px;overflow:auto;text-align:center;font-size:.9em}
+.fa{background:linear-gradient(135deg,var(--p),var(--t));display:flex;flex-direction:column;align-items:center;justify-content:center}.fa b{font-size:2.6em}
+.fb{transform:rotateY(180deg);background:#12306a;border:2px solid var(--t);text-align:left}
+.opt{display:block;width:100%;text-align:left;margin:4px 0;background:rgba(255,255,255,.12)}.opt.on{background:var(--p);outline:2px solid var(--w)}
+input,select{font:inherit;padding:8px;border-radius:8px;border:1px solid #567;background:#0d2145;color:var(--w);width:100%}
+.fb1{padding:8px;border-radius:10px;margin-top:6px}.ok{background:rgba(52,199,138,.25);border:1px solid var(--g)}.ko{background:rgba(243,168,71,.25);border:1px solid var(--o)}.hn{background:rgba(54,133,245,.25)}
+.home{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;min-height:0}.mc{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:4px;cursor:pointer;transition:transform .2s}.mc:hover{transform:translateY(-4px);border-color:var(--t)}.mc span{font-size:2.2em}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid rgba(255,255,255,.25);padding:4px 6px}
+canvas{width:100%;height:100%;display:block}.side{position:fixed;right:0;top:56px;bottom:56px;width:min(300px,90vw);background:#0d2145;border-left:2px solid var(--t);padding:10px;overflow:auto;z-index:9}
+.side button{display:block;width:100%;margin:4px 0}.big{font-size:1.4em;font-weight:700}svg text{font-family:system-ui,sans-serif}
+@media (prefers-reduced-motion:reduce){.fi{transition:none}.mc{transition:none}}
+.rm *{transition:none!important}
+</style></head><body><div id="app"></div>
+<script>
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[R(0,a.length-1)];
+const sh=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const fmt=x=>String(+(+x).toFixed(3)).replace('.',',');
+const Q=(q,o,a,e,h,tag)=>({q,o,a,e,h:h||['Piensa qué propiedad o idea se pide.','Recuerda la teoría de la misión.','Descarta las opciones que no cumplen la definición.'],tag});
+const MC=(q,c,w,e,h,tag,extra)=>{const o=sh([c,...w]);return Object.assign(Q(q,o,o.indexOf(c),e,h,tag),extra||{})};
+const TF=(q,v,e,tag)=>Q(q,['Verdadero','Falso'],v?0:1,e,0,tag);
+const MN=['Propiedades de la materia','Estados y teoría cinética','Comportamiento de los gases','Laboratorio de densidad','Cálculos y conversiones','Gráficas de calentamiento','Gran desafío final'];
+const MI=['🧪','🔬','🎈','⚖️','🧮','📈','🏆'];
+const CD={Materia:['Todo lo que tiene masa y ocupa espacio.','Una piedra, el aire, el agua.'],Masa:['Cantidad de materia de un cuerpo. Se mide en kg.','Una bolsa de arroz: 1 kg.'],Volumen:['Espacio que ocupa un cuerpo. Unidad SI: m³.','Una botella de 1 litro.'],Densidad:['Masa que hay en cada unidad de volumen. Es propiedad específica.','El aceite flota sobre el agua.'],Sólido:['Forma y volumen constantes; partículas muy juntas que vibran.','Hielo.'],Líquido:['Volumen constante y forma del recipiente.','Agua en un vaso.'],Gas:['Forma y volumen del recipiente; partículas muy separadas.','Vapor de agua.'],Temperatura:['Mide la agitación de las partículas.','En un té caliente las partículas se mueven más rápido.'],Presión:['Choques de las partículas de un gas contra las paredes.','Un balón inflado.'],Evaporación:['Líquido a gas solo en la superficie y a cualquier temperatura.','Un charco que se seca.'],Ebullición:['Líquido a gas en todo el líquido, a su temperatura de ebullición.','Agua hirviendo a 100 °C.'],Fusión:['Paso de sólido a líquido (absorbe calor).','Un cubito que se derrite.'],Solidificación:['Paso de líquido a sólido (libera calor).','Agua en el congelador.'],'Boyle-Mariotte':['Temperatura constante: si el volumen disminuye, la presión aumenta (relación inversa).','Apretar una jeringa tapada.'],Charles:['Presión constante: si sube la temperatura, sube el volumen (relación directa).','Un globo al sol.'],'Gay-Lussac':['Volumen constante: si sube la temperatura, sube la presión (relación directa).','Un bote de spray cerca del fuego.']};
+const cards=n=>n.map(k=>`<div class=fc tabindex=0 role=button onclick="this.classList.toggle('f')" onkeydown="if(event.key==='Enter')this.classList.toggle('f')"><div class=fi><div class=fa><b>?</b><small>Pulsa para descubrir</small></div><div class=fb><b>${k}</b><br>${CD[k][0]}<br><i>Ej.: ${CD[k][1]}</i></div></div></div>`).join('');
+const L=[
+[{t:'¿Qué es la materia?',x:'La materia es todo aquello que tiene <b>masa</b> y ocupa un <b>espacio</b> (volumen). La masa se mide con una balanza (kg) y el volumen en m³ o litros. El volumen no depende de la forma del recipiente.',c:['Materia','Masa','Volumen']},
+{t:'Propiedades generales y específicas',x:'<b>Generales</b>: las tiene toda la materia y no sirven para identificarla (masa, volumen). <b>Específicas</b>: valor propio de cada sustancia, permiten identificarla (densidad, temperatura de ebullición).',c:['Densidad']},
+{t:'Identificar materiales',x:'Dos vasos con 200 mL de líquido pueden contener agua o alcohol: el volumen no basta. Hay que comparar propiedades específicas, como la densidad o la temperatura de ebullición.'}],
+[{t:'Estados de agregación',x:'<table><tr><th></th><th>Forma</th><th>Volumen</th></tr><tr><td>Sólido</td><td>Constante</td><td>Constante</td></tr><tr><td>Líquido</td><td>Del recipiente</td><td>Constante</td></tr><tr><td>Gas</td><td>Del recipiente</td><td>Del recipiente</td></tr></table>',c:['Sólido','Líquido','Gas']},
+{t:'Teoría cinética',x:'La materia está formada por partículas muy pequeñas, con espacio vacío entre ellas, en continuo movimiento. Se atraen más en los sólidos y menos en los gases. Más temperatura = más agitación.',c:['Temperatura','Presión']},
+{t:'Cambios de estado',x:'<svg viewBox="0 0 700 290" style="display:block;margin:0 auto;height:34vh;height:34dvh;max-width:100%"><defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#ff4b3a" /></marker><marker id="ab" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#2f86ff" /></marker></defs><g fill="#c6f1ee" stroke="#20C7B5" stroke-width="3"><rect x="20" y="90" width="130" height="60" rx="8" /><rect x="285" y="90" width="130" height="60" rx="8" /><rect x="550" y="90" width="130" height="60" rx="8" /></g><g fill="#0B1730" font-size="22" font-weight="800" text-anchor="middle"><text x="85" y="128">SÓLIDO</text><text x="350" y="128">LÍQUIDO</text><text x="615" y="128">GASEOSO</text></g><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M85 88V40H615V84" stroke="#ff4b3a" marker-end="url(#ar)" /><path d="M160 108H272" stroke="#ff4b3a" marker-end="url(#ar)" /><path d="M425 108H537" stroke="#ff4b3a" marker-end="url(#ar)" /><path d="M275 134H163" stroke="#2f86ff" marker-end="url(#ab)" /><path d="M540 134H428" stroke="#2f86ff" marker-end="url(#ab)" /><path d="M615 154V215H85V156" stroke="#2f86ff" marker-end="url(#ab)" /></g><g fill="#F8FAFC" font-size="18" font-weight="700" text-anchor="middle"><text x="350" y="28">Sublimación</text><text x="217" y="96">Fusión</text><text x="482" y="96">Vaporización</text><text x="217" y="162">Solidificación</text><text x="482" y="162">Condensación</text><text x="350" y="245">Sublimación inversa</text></g><g font-size="16" fill="#F8FAFC"><path d="M180 272H225" stroke="#ff4b3a" stroke-width="5" marker-end="url(#ar)" /><text x="235" y="278">Absorbe calor</text><path d="M420 272H465" stroke="#2f86ff" stroke-width="5" marker-end="url(#ab)" /><text x="475" y="278">Libera calor</text></g></svg>'},
+{t:'Evaporación y ebullición',x:'La <b>evaporación</b> ocurre solo en la superficie y a cualquier temperatura. La <b>ebullición</b> ocurre en todo el líquido, a una temperatura concreta (el agua, 100 °C).',c:['Evaporación','Ebullición']}],
+[{t:'Ley de Boyle-Mariotte',x:'Temperatura <b>constante</b>. Si el volumen disminuye, las partículas chocan más veces con las paredes y la presión <b>aumenta</b>. Relación <b>inversa</b> entre presión y volumen.',c:['Boyle-Mariotte']},
+{t:'Ley de Charles',x:'Presión <b>constante</b>. Si la temperatura sube, las partículas se mueven más rápido y el volumen <b>aumenta</b>. Relación <b>directa</b> entre volumen y temperatura.',c:['Charles']},
+{t:'Ley de Gay-Lussac',x:'Volumen <b>constante</b>. Si la temperatura sube, las partículas chocan más y con más fuerza y la presión <b>aumenta</b>. Relación <b>directa</b>.',c:['Gay-Lussac']},
+{t:'Resumen',x:'<table><tr><th>Ley</th><th>Constante</th><th>Relación</th><th>Tipo</th></tr><tr><td>Boyle-Mariotte</td><td>Temperatura</td><td>Presión–Volumen</td><td>Inversa</td></tr><tr><td>Charles</td><td>Presión</td><td>Volumen–Temperatura</td><td>Directa</td></tr><tr><td>Gay-Lussac</td><td>Volumen</td><td>Presión–Temperatura</td><td>Directa</td></tr></table>'}],
+[{t:'Medir masa y volumen',x:'La masa se mide con una <b>balanza</b>. El volumen de un líquido, con una <b>probeta</b>. Para un sólido irregular se usa el <b>desplazamiento de agua</b>: V del sólido = volumen final − volumen inicial.'},
+{t:'Calcular la densidad',x:'<p class=big>d = m / V</p>Divide la masa entre el volumen. Compara materiales: dos piezas del mismo material tienen la misma densidad.'}],
+[{t:'Fórmula y despejes',x:'<p class=big>d = m / V</p><p class=big>m = d × V</p><p class=big>V = m / d</p>Tapa la incógnita: lo que queda es la operación. Pasos: datos, fórmula, despeje, sustitución, operación, resultado y unidad.'},
+{t:'Unidades y conversiones',x:'1 kg = 1000 g · 1 m³ = 1 000 000 cm³ · 1 mL = 1 cm³ · <b>1 g/cm³ = 1000 kg/m³</b>.<p>Si d &lt; 1 g/cm³ flota en agua; si d &gt; 1 se hunde.</p>'}],
+[{t:'Leer una gráfica de calentamiento',x:'Eje horizontal: tiempo. Eje vertical: temperatura. Los tramos inclinados son calentamiento; las <b>mesetas</b> (horizontales) son cambios de estado. Pulsa los tramos de la gráfica.',gv:1},
+{t:'Claves',x:'1.ª meseta = fusión; 2.ª meseta = ebullición. Duración = tiempo final − tiempo inicial de la meseta. No confundas duración (min) con temperatura (°C).'}],
+[{t:'Gran desafío final',x:'Mezcla de todas las misiones. En la pestaña Practica elige RETO RÁPIDO (6), NORMAL (12) o COMPLETO (20). En Experimenta tienes todas las tarjetas de conceptos.'}]];
+const B1=[MC('¿Cuál es una propiedad específica?','La densidad',['La masa','El volumen','La cantidad'],'La densidad tiene un valor propio para cada sustancia.',0,'Propiedades'),
+MC('Pasamos 250 mL de agua de un vaso alto a uno ancho. ¿Qué NO cambia?','El volumen',['La forma del líquido','La altura','El aspecto del recipiente'],'La forma se adapta al recipiente, pero masa y volumen se conservan.',0,'Propiedades'),
+MC('Dos cubos del mismo tamaño pero de distinto material. ¿Qué propiedad los distingue?','La densidad',['El volumen','Ocupar espacio','Tener masa'],'Tienen igual volumen; la densidad es específica.',0,'Propiedades'),
+TF('La masa de una piedra cambia al calentarla.',0,'La masa no depende de la temperatura.','Propiedades'),
+MC('La unidad de masa en el SI es…','El kilogramo',['El litro','El metro cúbico','El pascal'],'La masa se mide en kg; el volumen en m³.',0,'Propiedades'),
+MC('La materia es todo lo que…','tiene masa y ocupa espacio',['se ve','pesa mucho','se puede tocar'],'El aire no se ve y es materia.',0,'Propiedades'),
+TF('Dos líquidos con 100 mL son el mismo líquido.',0,'El volumen es propiedad general: no identifica la sustancia.','Propiedades'),
+MC('¿Con qué instrumento medimos la masa?','Balanza',['Probeta','Termómetro','Manómetro'],'La balanza mide masa.',0,'Propiedades')];
+const B2=[MC('Forma y volumen constantes:','Sólido',['Líquido','Gas','Ninguno'],'Solo el sólido tiene ambos constantes.',0,'Estados'),
+MC('Las partículas de un gas están…','muy separadas y en movimiento libre',['muy juntas y quietas','ordenadas y vibrando','pegadas'],'Hay mucho espacio vacío.',0,'Estados'),
+MC('Al aumentar la temperatura, las partículas…','se mueven más rápido',['se detienen','se hacen más grandes','se atraen más'],'La temperatura mide la agitación.',0,'Estados'),
+MC('La presión de un gas se debe a…','los choques de las partículas con las paredes',['su peso','su color','su masa solo'],'Más choques, más presión.',0,'Estados'),
+MC('Paso de líquido a gas:','Vaporización',['Fusión','Condensación','Solidificación'],'Vaporización: L→G.',0,'Estados'),
+MC('Paso de sólido a líquido:','Fusión',['Condensación','Sublimación','Solidificación'],'Fusión: S→L, absorbe calor.',0,'Estados'),
+MC('Paso de gas a líquido:','Condensación',['Fusión','Vaporización','Sublimación'],'Ocurre en el vaho de un espejo.',0,'Estados'),
+MC('La evaporación se diferencia de la ebullición en que…','ocurre solo en la superficie y a cualquier temperatura',['ocurre en todo el líquido','solo a 100 °C','no cambia el estado'],'La ebullición es en todo el líquido y a temperatura fija.',0,'Estados'),
+MC('Paso de sólido a gas sin pasar por líquido:','Sublimación',['Fusión','Vaporización','Condensación'],'Sublimación.',0,'Estados'),
+MC('Un cambio que absorbe calor:','Fusión',['Solidificación','Condensación','Sublimación inversa'],'Fusión, vaporización y sublimación absorben calor.',0,'Estados'),
+MC('Un líquido…','mantiene su volumen y toma la forma del recipiente',['mantiene forma y volumen','cambia de volumen siempre','ocupa todo el recipiente'],'Característica del estado líquido.',0,'Estados'),
+TF('En un sólido las partículas están quietas del todo.',0,'Vibran en posiciones fijas.','Estados')];
+const GS=t=>`<svg viewBox="0 0 200 140" width=200><path d="M30 10V120H190" stroke="#fff" fill=none stroke-width=2 />${t==0?'<path d="M40 20Q60 100 180 112" stroke="#20C7B5" fill=none stroke-width=4 />':'<path d="M40 110L180 25" stroke="#F3A847" stroke-width=4 />'}<text x=110 y=136 fill="#fff" font-size=12>${['Volumen','Temperatura','Temperatura'][t]}</text><text x=2 y=70 fill="#fff" font-size=12 transform="rotate(-90 12 70)">${['Presión','Volumen','Presión'][t]}</text></svg>`;
+const B3=[MC('Jeringa cerrada con temperatura constante. Si apretamos el émbolo, la presión…','aumenta',['disminuye','no cambia'],'Menos volumen: más choques por pared.',['Es la ley de Boyle-Mariotte.','Volumen y presión son inversos.','Menos volumen implica más choques.'],'Gases'),
+MC('Con temperatura constante aumentamos el volumen. La presión…','disminuye',['aumenta','no cambia'],'Los choques son menos frecuentes.',0,'Gases'),
+MC('Un globo se calienta a presión constante. Su volumen…','aumenta',['disminuye','no cambia'],'Ley de Charles: relación directa.',0,'Gases'),
+MC('Un bote rígido cerrado se calienta. La presión…','aumenta',['disminuye','no cambia'],'Ley de Gay-Lussac: volumen constante.',0,'Gases'),
+MC('¿Qué magnitud es constante en la ley de Boyle-Mariotte?','La temperatura',['La presión','El volumen'],'Relaciona P y V.',0,'Gases'),
+MC('¿Qué magnitud es constante en la ley de Charles?','La presión',['La temperatura','El volumen'],'Relaciona V y T.',0,'Gases'),
+MC('¿Qué magnitud es constante en la ley de Gay-Lussac?','El volumen',['La temperatura','La presión'],'Relaciona P y T.',0,'Gases'),
+MC('Presión y volumen (T constante) tienen una relación…','inversa',['directa','nula'],'Uno sube y el otro baja.',0,'Gases'),
+MC('Volumen y temperatura (P constante) tienen una relación…','directa',['inversa','nula'],'Ambos suben a la vez.',0,'Gases'),
+MC('Un globo se encoge en la nevera. ¿Qué ley?','Charles',['Boyle-Mariotte','Gay-Lussac'],'Baja la temperatura y baja el volumen.',0,'Gases'),
+MC('Un aerosol explota cerca del fuego. ¿Qué ley?','Gay-Lussac',['Boyle-Mariotte','Charles'],'Volumen fijo, sube T y sube P.',0,'Gases'),
+MC('Al comprimir un gas aumenta la presión porque las partículas…','chocan más veces contra las paredes',['se hacen mayores','se enfrían','se detienen'],'Hay menos espacio.',0,'Gases'),
+MC('Error: «Enfriamos un gas en un recipiente rígido y la presión aumenta». Correcto:','la presión disminuye',['el volumen aumenta','la presión no cambia'],'Gay-Lussac: más frío, menos presión.',0,'Gases'),];
+const B4=[MC('¿Qué instrumento mide el volumen de un líquido?','Probeta',['Balanza','Termómetro'],'La probeta tiene escala en mL.',0,'Densidad'),
+MC('Orden correcto para la densidad de una piedra:','masa → volumen inicial → volumen final → d = m/V',['d = m/V → masa → volumen','volumen final → masa → agua','masa → agua → temperatura'],'Primero se mide, después se calcula.',0,'Densidad'),
+MC('Dos piezas con la misma densidad…','pueden ser del mismo material',['son de materiales distintos','tienen igual masa siempre'],'La densidad es específica.',0,'Densidad'),
+MC('Una pieza mide d = 2,7 g/cm³. Según la tabla es…','aluminio',['hierro (7,8)','cobre (8,9)'],'Compara con la tabla.',0,'Densidad')];
+const D=[0.8,0.9,1.2,1.5,2.5,2.7,7.8,8.9];
+function gen(k){const d=pick(D),V=R(2,20)*5,m=+(d*V).toFixed(1),V2=R(2,20)*50,m2=+(d*V2).toFixed(1),n={tag:'Densidad'};
+const N=(q,num,u,e,h)=>Object.assign(n,{q,num,u,e,h:h||['Recuerda la fórmula de densidad.','Escribe la fórmula y despeja la incógnita.','Sustituye los datos con sus unidades.']});
+switch(k){
+case 0:return N(`Una pieza tiene masa ${fmt(m)} g y volumen ${V} cm³. Calcula su densidad.`,d,'g/cm³',`d = m / V = ${fmt(m)} / ${V} = ${fmt(d)} g/cm³`);
+case 1:return N(`Un material tiene densidad ${fmt(d)} g/cm³. ¿Qué masa tienen ${V} cm³?`,m,'g',`m = d × V = ${fmt(d)} × ${V} = ${fmt(m)} g`);
+case 2:return N(`Una pieza de ${fmt(m)} g tiene densidad ${fmt(d)} g/cm³. Calcula su volumen.`,V,'cm³',`V = m / d = ${fmt(m)} / ${fmt(d)} = ${V} cm³`);
+case 3:return N(`Un objeto de ${fmt(m2/1000)} kg ocupa ${V2} cm³. Calcula su densidad en g/cm³.`,d,'g/cm³',`m = ${fmt(m2)} g; d = ${fmt(m2)} / ${V2} = ${fmt(d)} g/cm³`);
+case 4:return N(`Un líquido tiene densidad ${fmt(d)} g/cm³. Exprésala en kg/m³.`,d*1000,'kg/m³',`1 g/cm³ = 1000 kg/m³ → ${fmt(d)} × 1000 = ${fmt(d*1000)} kg/m³`);
+case 5:return N(`Un líquido tiene densidad ${fmt(d)} g/cm³. ¿Qué volumen ocupan ${fmt(m2/1000)} kg? Exprésalo en cm³.`,V2,'cm³',`m = ${fmt(m2)} g; V = m / d = ${fmt(m2)} / ${fmt(d)} = ${V2} cm³`);
+case 6:{const mv=R(5,10)*10,mt=+(mv+m).toFixed(1);return N(`Un vaso vacío pesa ${mv} g. Con ${V} cm³ de líquido pesa ${fmt(mt)} g. Calcula la densidad del líquido.`,d,'g/cm³',`m líquido = ${fmt(mt)} − ${mv} = ${fmt(m)} g; d = ${fmt(m)} / ${V} = ${fmt(d)} g/cm³`)}
+case 7:{const dd=pick([800,920,1000,1200,2700]),vm=R(1,9)/10;return N(`Un depósito contiene ${fmt(vm)} m³ de un material de densidad ${dd} kg/m³. ¿Qué masa hay?`,dd*vm,'kg',`m = d × V = ${dd} × ${fmt(vm)} = ${fmt(dd*vm)} kg`)}
+default:{const dd=pick([0.6,0.8,0.9,1.2,2.5]),fl=dd<1,v=R(2,10)*10;return Object.assign(MC(`Un objeto de ${fmt(dd*v)} g ocupa ${v} cm³. ¿Flotará en agua (1 g/cm³)?`,fl?'Sí, flota':'No, se hunde',[fl?'No, se hunde':'Sí, flota'],`d = ${fmt(dd*v)} / ${v} = ${fmt(dd)} g/cm³. ${fl?'Menor que 1: flota.':'Mayor que 1: se hunde.'}`,0,'Densidad'))}}}
+function labQ(){const d=pick([2.7,7.8,8.9,2.5]),V=R(8,40),v0=R(4,8)*10;
+return pick([Object.assign({q:`Una probeta marca ${v0} mL. Al sumergir una pieza marca ${v0+V} mL. ¿Qué volumen tiene la pieza?`,num:V,u:'cm³',e:`V = ${v0+V} − ${v0} = ${V} mL = ${V} cm³`,h:['El volumen es lo que sube el agua.','Resta final − inicial.','1 mL = 1 cm³.'],tag:'Densidad'}),
+{q:`Una pieza tiene masa ${fmt(d*V)} g. Desplaza ${V} mL de agua. Calcula su densidad.`,num:d,u:'g/cm³',e:`d = ${fmt(d*V)} / ${V} = ${fmt(d)} g/cm³`,h:['Volumen desplazado = volumen de la pieza.','d = m / V.','Divide.'],tag:'Densidad'}])}
+const G=[{T0:20,m:50,b:120,t:[2,5,9,13,15]},{T0:10,m:30,b:90,t:[1,4,8,11,13]},{T0:-20,m:10,b:80,t:[3,6,10,14,16]},{T0:15,m:60,b:140,t:[2,6,11,15,17]},{T0:0,m:40,b:100,t:[4,8,12,17,19]},{T0:25,m:70,b:160,t:[3,5,10,14,16]},{T0:-5,m:20,b:75,t:[2,5,9,12,14]},{T0:30,m:80,b:150,t:[1,5,9,13,15]}];
+const PT=g=>{const[a,b,c,d,e]=g.t;return[[0,g.T0],[a,g.m],[b,g.m],[c,g.b],[d,g.b],[e,g.b+Math.round((g.b-g.m)*.15)]]};
+const SEGI=['AB: sólido calentándose; la temperatura sube.','BC: FUSIÓN (meseta). Coexisten sólido y líquido.','CD: líquido calentándose.','DE: EBULLICIÓN (meseta). Coexisten líquido y gas.','EF: gas calentándose.'];
+function gsvg(gi,hl,click){const g=G[gi],p=PT(g),tm=g.t[4],Tmin=Math.floor((g.T0-8)/10)*10,Tmax=Math.ceil((p[5][1]+8)/10)*10,X=t=>60+t/tm*420,Y=T=>290-(T-Tmin)/(Tmax-Tmin)*270;
+let s=`<svg viewBox="0 0 520 340" style="width:100%;height:100%"><rect x=60 y=20 width=420 height=270 fill="rgba(255,255,255,.05)"/>`;
+const st=Tmax-Tmin>150?20:10;for(let T=Tmin;T<=Tmax;T+=st)s+=`<line x1=60 x2=480 y1=${Y(T)} y2=${Y(T)} stroke="#fff3"/><text x=54 y=${Y(T)+4} fill="#fff" font-size=11 text-anchor=end>${T}</text>`;
+for(let t=0;t<=tm;t+=2)s+=`<line y1=20 y2=290 x1=${X(t)} x2=${X(t)} stroke="#fff2"/><text x=${X(t)} y=306 fill="#fff" font-size=11 text-anchor=middle>${t}</text>`;
+s+=`<text x=270 y=332 fill="#fff" font-size=13 text-anchor=middle>Tiempo (min)</text><text transform="rotate(-90 14 155)" x=14 y=155 fill="#fff" font-size=13 text-anchor=middle>Temperatura (°C)</text><line x1=60 y1=20 x2=60 y2=290 stroke="#fff" stroke-width=2 /><line x1=60 y1=290 x2=480 y2=290 stroke="#fff" stroke-width=2 />`;
+for(let i=0;i<5;i++){const a=p[i],b=p[i+1],on=hl===i;s+=`<line x1=${X(a[0])} y1=${Y(a[1])} x2=${X(b[0])} y2=${Y(b[1])} stroke="${on?'#F3A847':'#20C7B5'}" stroke-width=${on?7:4} stroke-linecap=round />`;if(click)s+=`<line x1=${X(a[0])} y1=${Y(a[1])} x2=${X(b[0])} y2=${Y(b[1])} stroke=transparent stroke-width=22 style="cursor:pointer" onclick="S.hl=${i};render()"/>`}
+p.forEach((q,i)=>s+=`<circle cx=${X(q[0])} cy=${Y(q[1])} r=5 fill="#fff"/><text x=${X(q[0])+8} y=${Y(q[1])+(i%2?18:-8)} fill="#F3A847" font-size=14 font-weight=700>${'ABCDEF'[i]}</text>`);return s+'</svg>'}
+function qg(gi,k){const g=G[gi],[t1,t2,t3,t4]=g.t,tg='Gráficas',T=x=>x+' °C',E=(q,c,w,e,h)=>Object.assign(MC(q,c,w,e,h,tg),{g:gi}),N=(q,n,u,e)=>({q,num:n,u,e,g:gi,tag:tg,h:['Localiza la meseta correspondiente.','Lee los valores en los ejes.','Duración = tiempo final − tiempo inicial.']});
+const tr=['AB','BC','CD','DE','EF'],ts=(i)=>tr.filter(x=>x!==tr[i]).slice(0,3);
+switch(k){
+case 0:return E('¿Cuál es la temperatura de fusión?',T(g.m),[T(g.b),T(g.T0),T(g.m+10)],'Es la temperatura de la primera meseta (BC).');
+case 1:return N('¿Cuál es la temperatura de ebullición (°C)?',g.b,'°C','Es la temperatura de la segunda meseta (DE).');
+case 2:return E('¿Qué tramo corresponde a la fusión?','BC',ts(1),'La fusión es la primera meseta.');
+case 3:return E('¿Qué tramo corresponde a la ebullición?','DE',ts(3),'La ebullición es la segunda meseta.');
+case 4:return N('¿Cuánto dura la fusión (min)?',t2-t1,'min',`Duración = ${t2} − ${t1} = ${t2-t1} min`);
+case 5:return N('¿Cuánto dura la ebullición (min)?',t4-t3,'min',`Duración = ${t4} − ${t3} = ${t4-t3} min`);
+case 6:{const i=pick([0,2,4]);return E(`¿En qué estado está la sustancia en el tramo ${tr[i]}?`,['Sólido','','Líquido','','Gas'][i],['Sólido','Líquido','Gas'].filter(x=>x!==['Sólido','','Líquido','','Gas'][i]),'Antes de la fusión es sólido; entre meseta y meseta, líquido; tras la ebullición, gas.')}
+case 7:return E('Durante la meseta BC, ¿qué hay en el recipiente?','Sólido y líquido',['Solo sólido','Líquido y gas','Solo gas'],'En la fusión coexisten sólido y líquido.');
+case 8:{const x=Math.round((g.m+g.b)/2);return E(`¿En qué estado está a ${x} °C?`,'Líquido',['Sólido','Gas','Sólido y líquido'],`${x} °C está entre ${g.m} °C y ${g.b} °C: líquido.`)}
+case 9:{const x=Math.round((g.T0+g.m)/2);return E(`¿En qué estado está a ${x} °C?`,'Sólido',['Líquido','Gas','Líquido y gas'],`${x} °C es menor que ${g.m} °C: sólido.`)}
+case 10:{const x=Math.round((g.m+g.b)/2);return Object.assign(TF(`Afirmación: «A ${x} °C la sustancia ya es un gas».`,0,`Falso: la ebullición empieza a ${g.b} °C; a ${x} °C es líquido.`,tg),{g:gi})}
+default:return E('¿Por qué la temperatura no sube durante la meseta DE?','La energía se usa en el cambio de estado',['Se apaga el calentador','La sustancia no recibe calor','Se enfría el gas'],'En un cambio de estado el calor se emplea en separar partículas.')}}
+const BG=[];for(let gi=0;gi<8;gi++)for(let j=0;j<3;j++)BG.push(qg(gi,(3*gi+j)%12));
+function build(m){if(m==0)return B1;if(m==1)return B2;if(m==2)return B3;if(m==3){const a=[...B4];for(let i=0;i<8;i++)a.push(labQ());return a}
+if(m==4)return Array.from({length:30},(_,i)=>gen(i%9));if(m==5)return BG;return[]}
+const S={home:1,m:0,t:0,i:0,sel:null,val:'',fb:null,hint:0,sol:0,done:{},items:{},fin:null,sk:0,side:0,menu:0,hl:null,rm:0,fsMsg:0};
+try{Object.assign(S.done,JSON.parse(localStorage.getItem('fyqd')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('fyqd',JSON.stringify(S.done))}catch(e){}};
+function resetAll(){S.cf=1;render()}
+function doReset(){S.cf=0;S.done={};S.items={};S.fin=null;S.sk=0;S.side=0;S.menu=0;S.tp=-50;S.gv=0;S.wide=0;S.m=0;S.t=0;S.i=0;GM.mode=0;GM.V=60;GM.T=300;GM.pred=null;GM.res='';GM.pts=[];LB.o=null;CV.a='';CV.b='';CV.c='';try{localStorage.removeItem('fyqd')}catch(e){}rs();S.home=1;render()}
+const items=m=>m==6?(S.fin?S.fin.list:[]):(S.items[m]||(S.items[m]=build(m)));
+const rs=()=>{S.sel=null;S.val='';S.fb=null;S.hint=0;S.sol=S.sk;S.hl=null};
+const go=(m,t)=>{S.m=m;S.t=t;S.i=0;S.home=0;S.menu=0;rs();render()};
+function nav(d){const m=S.m;if(S.home)return;
+if(S.t==0){S.i+=d;if(S.i<0){S.i=0}if(S.i>=L[m].length){S.t=m==0?2:1;S.i=0}}
+else if(S.t==1){if(d<0){S.t=0;S.i=L[m].length-1}else{S.t=2;S.i=0}}
+else{const n=items(m).length;S.i+=d;if(S.i<0){if(m==0){S.t=0;S.i=L[0].length-1}else{S.t=1;S.i=0}}if(S.i>=n){S.i=n-1;if(S.fin&&m==6)S.fin.end=1}}
+rs();render()}
+function check(){const q=items(S.m)[S.i];if(!q)return;let ok;
+if(q.o){if(S.sel==null){S.fb={ok:0,m:'Elige una opción.'};return render()}ok=S.sel==q.a}
+else{const v=parseFloat(String(S.val).replace(',','.'));if(isNaN(v)){S.fb={ok:0,m:'Escribe un número.'};return render()}ok=Math.abs(v-q.num)<=Math.max(Math.abs(q.num)*.015,.005)}
+S.fb={ok,m:ok?'¡Correcto! '+q.e:'No es correcto. Revisa y reinténtalo o pide una pista.'};
+if(ok){S.done[S.m+':'+S.i+(S.m==6?':f':'')]=1;save()}if(S.fin&&S.m==6){S.fin.r[S.i]=S.fin.r[S.i]||ok?1:0}render()}
+const hint=()=>{S.hint=Math.min(3,S.hint+1);render()},sol=()=>{S.sol=1;render()};
+function fs(){const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{S.fsMsg=1;render()});else{S.fsMsg=1;render()}}
+document.addEventListener('fullscreenchange',()=>render());
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;if(e.key==='ArrowRight')nav(1);if(e.key==='ArrowLeft')nav(-1)});
+let stop=null;const clean=()=>{if(stop){stop();stop=null}};
+const cnt=m=>Object.keys(S.done).filter(k=>k.startsWith(m+':')&&k.split(':').length==2).length;
+function qHTML(q){let h='';if(q.svg)h+=`<div style="text-align:center">${q.svg}</div>`;h+=`<h2>${q.q}</h2>`;
+if(q.o)h+=q.o.map((o,i)=>`<button class="opt ${S.sel===i?'on':''}" onclick="S.sel=${i};check()">${'ABCD'[i]}. ${o}</button>`).join('');
+else h+=`<div style="display:flex;gap:8px;align-items:center"><input id=ans inputmode=decimal value="${S.val}" oninput="S.val=this.value" onkeydown="if(event.key==='Enter')check()" placeholder="Respuesta"><b>${q.u}</b></div>`;
+if(S.hint)h+=`<div class="fb1 hn">💡 ${q.h.slice(0,S.hint).map((x,i)=>`Pista ${i+1}: ${x}`).join('<br>')}</div>`;
+if(S.fb)h+=`<div class="fb1 ${S.fb.ok?'ok':'ko'}">${S.fb.m}</div>`;
+if(S.sol)h+=`<div class="fb1 hn">✅ Solución: ${q.o?q.o[q.a]+'. ':''}${q.e}</div>`;return h}
+function practice(){const m=S.m;
+if(m==6&&!S.fin){return`<div class=pn style="flex:1;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center"><h2>Elige tu reto</h2><div><button class=g onclick="mkFin(6)">RETO RÁPIDO · 6</button> <button onclick="mkFin(12)">RETO NORMAL · 12</button> <button class=o onclick="mkFin(20)">RETO COMPLETO · 20</button></div></div>`}
+if(m==6&&S.fin.end){const f=S.fin,sc=Object.values(f.r).filter(x=>x).length,bad={};f.list.forEach((q,i)=>{if(!f.r[i])bad[q.tag]=1});return`<div class=pn style="flex:1;text-align:center"><h2>Resultado: ${sc} / ${f.list.length}</h2><p>${Object.keys(bad).length?'Conviene repasar: <b>'+Object.keys(bad).join(', ')+'</b>':'¡Perfecto! Nada que repasar.'}</p><button onclick="S.fin=null;S.i=0;rs();render()">Nueva ronda</button></div>`}
+const q=items(m)[S.i];if(!q)return'';const n=items(m).length,g=q.g!=null;
+return`<div style="font-size:.85em;opacity:.8">Reto ${S.i+1} / ${n} ${m==4?'· problemas generados al azar':''}</div><div class=two>${g?`<div class=pn style="flex:55">${gsvg(q.g,null,0)}</div>`:''}<div class=pn style="flex:${g?45:1}">${qHTML(q)}</div></div>`}
+function mkFin(n){const pool=[...B1,...B2,...B3,...B4,...Array.from({length:8},(_,i)=>gen(i%9)),...sh(BG).slice(0,6)];S.fin={list:sh(pool).slice(0,n),r:{},end:0};S.i=0;rs();render()}
+const C=document.getElementById('app');
+function render(){clean();const m=S.m,fsOn=!!document.fullscreenElement;let tot=Object.keys(S.done).length;
+let top=`<div class=bar><span class=logo>⚗️ MISIÓN FYQ</span><span>${S.home?'':MI[m]+' '+MN[m]}</span><span class=sp></span><span>⭐ ${tot}</span><button class=n onclick="S.home=1;S.menu=0;render()">🏠</button><button class=n onclick="S.menu=!S.menu;render()">Misiones</button><button class=n onclick="S.side=!S.side;render()">👩‍🏫 Profesor</button><button onclick="fs()">⛶ ${fsOn?'SALIR':'PANTALLA COMPLETA'}</button></div>`;
+let bd='';
+if(S.home){bd=`<div style="text-align:center"><h2 style="font-size:2em;margin:0">EL GRAN LABORATORIO DE REPASO</h2><div style="color:var(--o);font-weight:800;font-size:1.3em;margin:2px 0">UNIDAD 2 · PROPIEDADES DE LA MATERIA</div><i>Aprende. Experimenta. Razona. Calcula. Supera el reto.</i><div style="margin-top:6px"><button class=g onclick="go(0,0)">COMENZAR</button> <button onclick="S.menu=1;render()">ELEGIR MISIÓN</button> <button class=n onclick="resetAll()">🔄 REINICIAR TODO</button></div></div><div class=home>${MN.map((n,i)=>`<div class="pn mc" tabindex=0 role=button onclick="go(${i},0)" onkeydown="if(event.key==='Enter')go(${i},0)"><span>${MI[i]}</span><b>${i+1}. ${n}</b><small>${cnt(i)} retos completados</small></div>`).join('')}</div>`}
+else{const tabs=`<div class=tabs>${['APRENDE','EXPERIMENTA','PRACTICA'].map((x,i)=>m==0&&i==1?'':`<button class="${S.t==i?'on':''}" onclick="go(${m},${i})">${x}</button>`).join('')}</div>`;let b='';
+if(S.t==0){const p=L[m][S.i];b=`<div class=two><div class=pn style="flex:${p.c||p.gv?45:1}"><h2>${p.t}</h2>${p.x}<small>Página ${S.i+1}/${L[m].length}</small></div>${p.gv?`<div class=pn style="flex:55">${gsvg(0,S.hl,1)}<div class="fb1 hn">${S.hl!=null?SEGI[S.hl]:'Pulsa un tramo de la gráfica.'}</div></div>`:p.c?`<div class=pn style="flex:55"><div class=cards>${cards(p.c)}</div></div>`:''}</div>`}
+else if(S.t==1)b=xp(m);else b=practice();bd=tabs+b}
+let bot=S.home?'<div class="bar b"></div>':`<div class="bar b"><button class=n onclick="nav(-1)">⬅ Anterior</button><button class=o onclick="hint()" ${S.t==2&&items(m)[S.i]&&!(m==6&&S.fin&&S.fin.end)?'':'disabled'}>💡 Pista</button><button class=g onclick="check()" ${S.t==2&&items(m)[S.i]&&!(m==6&&S.fin&&S.fin.end)?'':'disabled'}>✔ Comprobar</button><button class=n onclick="sol()" ${S.t==2&&items(m)[S.i]?'':'disabled'}>👁 Ver solución</button><button onclick="nav(1)">Siguiente ➡</button></div>`;
+let ov='';if(S.menu)ov=`<div class=side style="left:0;right:auto;border-left:0;border-right:2px solid var(--t)"><h2>Misiones</h2>${MN.map((n,i)=>`<button class=n onclick="go(${i},0)">${MI[i]} ${i+1}. ${n}</button>`).join('')}</div>`;
+if(S.side)ov+=`<div class=side><h2>Panel del profesor</h2><button onclick="S.sk=!S.sk;S.sol=S.sk;render()">${S.sk?'Ocultar':'Mostrar'} soluciones automáticamente</button><button onclick="S.items={};S.fin=null;S.i=0;rs();render()">Generar otra ronda</button><button onclick="S.rm=!S.rm;document.body.classList.toggle('rm',S.rm);render()">Animaciones: ${S.rm?'reducidas':'normales'}</button><button onclick="Object.keys(S.done).forEach(k=>{if(k.startsWith(S.m+':'))delete S.done[k]});save();S.i=0;rs();render()">Reiniciar misión</button><button onclick="resetAll()">Reiniciar todo</button><div class="fb1 hn"><b>Fórmulas de densidad</b><br>d = m / V<br>m = d × V<br>V = m / d<br>1 g/cm³ = 1000 kg/m³</div><div class="fb1 hn"><b>Progreso</b><br>${MN.slice(0,6).map((n,i)=>`${n}: ${cnt(i)}`).join('<br>')}</div></div>`;
+if(S.cf)ov+=`<div style="position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center"><div class=pn style="background:#0d2145;text-align:center;max-width:420px"><h2>¿Reiniciar todo?</h2><p>Se borrarán las estrellas, los retos completados y las rondas generadas.</p><button class=o onclick="doReset()">Sí, reiniciar todo</button> <button class=n onclick="S.cf=0;render()">Cancelar</button></div></div>`;
+C.innerHTML=top+`<main>${bd}${S.fsMsg?'<small style="color:var(--o)">Tu navegador no permite pantalla completa aquí: abre el artefacto en ventana propia o pulsa F11.</small>':''}</main>`+bot+ov;
+if(S.after){const f=S.after;S.after=null;f()}}
+// ---------- EXPERIMENTA ----------
+const GM={mode:0,V:60,T:300,pred:null,res:'',V0:60,T0:300,ps:null,pts:[]};
+function xp(m){
+if(m==0)return`<div class=two><div class=pn style="flex:55"><svg viewBox="0 0 300 240" style="width:100%;height:100%"><rect x=20 y=30 width=${S.wide?200:60} height=${S.wide?60:200} rx=6 fill="none" stroke="#fff" stroke-width=3 transform="translate(${S.wide?30:100} ${S.wide?150:0})"/><rect x=${S.wide?50:104} y=${S.wide?180:34} width=${S.wide?192:52} height=${S.wide?58:196} fill="#3685F5" opacity=.8 transform="translate(0 0)"/><text x=150 y=20 fill="#fff" text-anchor=middle>Líquido: 200 mL · 200 g</text></svg></div><div class=pn style="flex:45"><h2>Cambia el recipiente</h2><p>Predice: al pasar el líquido a otro recipiente, ¿qué cambia?</p><button onclick="S.wide=!S.wide;render()">Verter a recipiente ${S.wide?'alto':'ancho'}</button><div class="fb1 ok">Forma: cambia ✔<br>Volumen: 200 mL (no cambia)<br>Masa: 200 g (no cambia)</div></div></div>`;
+if(m==1)return`<div class=two><div class=pn style="flex:55"><canvas id=cv width=520 height=400></canvas></div><div class=pn style="flex:45"><h2>Partículas y temperatura</h2><p>Mueve la temperatura. Este modelo usa fusión a 0 °C y ebullición a 100 °C.</p><input type=range min=-100 max=200 value=${S.tp??-50} oninput="S.tp=+this.value;document.getElementById('tv').textContent=this.value">
+<p class=big><span id=tv>${S.tp??-50}</span> °C — <span id=st></span></p><p id=ex></p></div></div>`+(S.after=simP,'');
+if(m==2)return xGas();
+if(m==3)return xLab();
+if(m==4)return xCalc();
+if(m==5)return`<div class=two><div class=pn style="flex:60"><div style="height:100%">${gsvg(S.gv||0,S.hl,1)}</div></div><div class=pn style="flex:40"><h2>Gráfica ${(S.gv||0)+1}/8</h2>${G.map((_,i)=>`<button class="${(S.gv||0)==i?'':'n'}" onclick="S.gv=${i};S.hl=null;render()">${i+1}</button>`).join(' ')}<div class="fb1 hn">${S.hl!=null?SEGI[S.hl]+(S.hl==1?` Temperatura de fusión: ${G[S.gv||0].m} °C. Duración: ${G[S.gv||0].t[1]-G[S.gv||0].t[0]} min.`:S.hl==3?` Temperatura de ebullición: ${G[S.gv||0].b} °C. Duración: ${G[S.gv||0].t[3]-G[S.gv||0].t[2]} min.`:''):'Pulsa un tramo de la gráfica.'}</div></div></div>`;
+return`<div class=pn style="flex:1"><h2>Todas las tarjetas</h2><div class=cards style="grid-template-columns:repeat(8,1fr)">${cards(Object.keys(CD))}</div></div>`}
+function simP(){const cv=document.getElementById('cv');if(!cv)return;const c=cv.getContext('2d'),W=520,H=400,ps=[];for(let i=0;i<30;i++)ps.push({hx:70+(i%6)*70,hy:60+Math.floor(i/6)*60,x:70+(i%6)*70,y:60+Math.floor(i/6)*60,vx:Math.random()*2-1,vy:Math.random()*2-1});
+let id;const f=()=>{const T=S.tp??-50,s=T<0?0:T<100?1:2,sp=[0,1.3,3.2][s]*(.7+Math.abs(T)/150);const a=document.getElementById('st');if(a)a.textContent=['Sólido','Líquido','Gas'][s];const e=document.getElementById('ex');if(e)e.textContent=['Las partículas vibran en posiciones fijas.','Se desplazan sin separarse mucho.','Están muy separadas y se mueven libres.'][s];
+c.clearRect(0,0,W,H);c.strokeStyle='#fff';c.lineWidth=3;c.strokeRect(10,10,W-20,H-20);c.fillStyle=s==2?'#20C7B5':'#3685F5';
+ps.forEach(p=>{if(s==0){p.x=p.hx+(Math.random()-.5)*(2+T/-40);p.y=p.hy+(Math.random()-.5)*(2+T/-40)}else{const top=s==1?H*.4:20;p.x+=p.vx*sp;p.y+=p.vy*sp;if(p.x<20||p.x>W-20)p.vx*=-1;if(p.y<top||p.y>H-20)p.vy*=-1;p.x=Math.min(W-20,Math.max(20,p.x));p.y=Math.min(H-20,Math.max(top,p.y))}c.beginPath();c.arc(p.x,p.y,10,0,7);c.fill()});id=requestAnimationFrame(f)};f();stop=()=>cancelAnimationFrame(id)}
+function gasVals(){const g=GM;if(g.mode==0){g.T=300}if(g.mode==1){g.V=60*g.T/300}if(g.mode==2){g.V=60}g.P=100*(g.T/300)*(60/g.V)}
+function xGas(){gasVals();const g=GM,ct=['Temperatura','Presión','Volumen'][g.mode],sl=g.mode==0?'volumen':'temperatura',dep=['presión','volumen','presión'][g.mode],val=g.mode==0?g.V:g.T,mn=g.mode==0?30:250,mx=g.mode==0?100:450;
+S.after=simG;return`<div class=two><div class=pn style="flex:55"><canvas id=cv width=420 height=400></canvas></div><div class=pn style="flex:45"><div class=tabs>${['BOYLE','CHARLES','GAY-LUSSAC'].map((x,i)=>`<button class="${g.mode==i?'on':''}" onclick="GM.mode=${i};GM.V=60;GM.T=300;GM.pred=null;GM.res='';GM.pts=[];render()">${x}</button>`).join('')}</div>
+<p>Constante: <b>${ct}</b>. ¿Qué crees que ocurrirá con la <b>${dep}</b> si AUMENTAS el ${sl}?</p><div>${['Aumentará','Disminuirá','Permanecerá'].map((x,i)=>`<button class="${g.pred===i?'':'n'}" onclick="GM.pred=${i};GM.V0=GM.V;GM.T0=GM.T;GM.res='';render()">${x}</button>`).join(' ')}</div>
+<p>Control de ${sl}:</p><input type=range min=${mn} max=${mx} value=${val} ${g.pred==null?'disabled':''} oninput="gIn(this.value)"><p>P: <b id=iP></b> · V: <b id=iV></b> · T: <b id=iT></b></p><div id=gr></div><canvas id=gc width=240 height=130 style="height:130px;width:240px"></canvas></div></div>`}
+function gIn(v){const g=GM;if(g.mode==0)g.V=+v;else g.T=+v;gasVals();g.pts.push([g.mode==0?g.V:g.T,g.mode==1?g.V:g.P]);if(g.pts.length>80)g.pts.shift();
+const base=g.mode==0?g.V0:g.T0;const cur=g.mode==0?g.V:g.T;const el=document.getElementById('gr');
+if(cur>base&&g.pred!=null){const real=g.mode==1?(g.V>60*g.T0/300?0:2):(g.mode==0?(g.P<100*(g.T/300)*(60/g.V0)?1:2):(g.P>100*(g.T0/300)?0:2));const ok=real==g.pred;g.res=(ok?'✔ Predicción correcta. ':'✘ Tu predicción no era correcta. ')+['Boyle: menos espacio, más choques: P sube; más espacio, P baja.','Charles: más temperatura, partículas más rápidas: el volumen aumenta.','Gay-Lussac: más temperatura, más choques y más fuertes: la presión aumenta.'][g.mode]}
+else g.res='Aumenta el control para comprobar tu predicción.';if(el)el.innerHTML=`<div class="fb1 hn">${g.res}</div>`}
+function simG(){const cv=document.getElementById('cv');if(!cv)return;const c=cv.getContext('2d'),g=GM;if(!g.ps||g.ps.length!=30)g.ps=Array.from({length:30},()=>({x:Math.random()*300+40,y:Math.random()*100+260,a:Math.random()*6.28}));
+let id;const f=()=>{gasVals();const top=360-g.V*3.2,sp=Math.sqrt(g.T/300)*2.5,arr=(v,v0)=>v>v0*1.02?'↑':v<v0*.98?'↓':'=';
+const sv=(i,t)=>{const e=document.getElementById(i);if(e)e.textContent=t};sv('iP',arr(g.P,100)+' '+Math.round(g.P)+' kPa*');sv('iV',arr(g.V,60)+' '+Math.round(g.V)+' mL*');sv('iT',arr(g.T,300)+' '+Math.round(g.T)+' K*');
+c.clearRect(0,0,420,400);c.strokeStyle='#fff';c.lineWidth=4;c.strokeRect(40,40,340,320);c.fillStyle='#8fa6d0';c.fillRect(40,top-10,340,14);c.fillRect(205,20,10,top-20);
+c.fillStyle='#20C7B5';g.ps.forEach(p=>{p.x+=Math.cos(p.a)*sp;p.y+=Math.sin(p.a)*sp;if(p.x<48||p.x>372){p.a=Math.PI-p.a}if(p.y<top+6||p.y>352){p.a=-p.a}p.x=Math.min(372,Math.max(48,p.x));p.y=Math.min(352,Math.max(top+6,p.y));c.beginPath();c.arc(p.x,p.y,7,0,7);c.fill()});
+const gc=document.getElementById('gc');if(gc){const q=gc.getContext('2d');q.clearRect(0,0,240,130);q.strokeStyle='#fff';q.strokeRect(10,5,220,110);q.fillStyle='#F3A847';const r=g.mode==0?[30,100,0,250]:[250,450,g.mode==1?20:20,g.mode==1?120:400];g.pts.forEach(p=>{const X=10+(p[0]-r[0])/(r[1]-r[0])*220,Yv=g.mode==0?p[1]:g.mode==1?p[1]:p[1];const Y=g.mode==1?115-(Yv-20)/(110-20)*100:115-Math.min(1,Yv/(g.mode==0?250:200))*105;q.fillRect(X-2,Y-2,4,4)});q.fillStyle='#fff';q.font='11px sans-serif';q.fillText(['P frente a V','V frente a T','P frente a T'][g.mode],14,126)}
+id=requestAnimationFrame(f)};f();stop=()=>cancelAnimationFrame(id)}
+const MAT=[['Aluminio',2.7],['Hierro',7.8],['Cobre',8.9],['Vidrio',2.5]];
+const LB={o:null,v:0,placed:0,sub:0,ans:'',msg:''};
+function lnew(){const [n,d]=pick(MAT);LB.o={n,d,V:R(8,40)};LB.o.m=+(d*LB.o.V).toFixed(1);LB.v0=R(4,8)*10;LB.placed=0;LB.sub=0;LB.ans='';LB.msg='';}
+function xLab(){if(!LB.o)lnew();const o=LB.o,lvl=LB.sub?LB.v0+o.V:LB.v0,y=300-lvl*2.6;
+return`<div class=two><div class=pn style="flex:55"><svg viewBox="0 0 400 340" style="width:100%;height:100%"><rect x=20 y=240 width=150 height=40 fill="#456" /><rect x=40 y=215 width=110 height=25 fill="#222" /><text x=95 y=234 fill="#0f0" text-anchor=middle font-size=16>${LB.placed?fmt(o.m)+' g':'0,0 g'}</text>${LB.placed?'<rect x=75 y=190 width=40 height=25 fill="#999"/>':''}<rect x=260 y=30 width=70 height=270 fill="none" stroke="#fff" stroke-width=3 /><rect x=262 y=${y} width=66 height=${298-y} fill="#3685F5" opacity=.8 />${[0,20,40,60,80,100].map(v=>`<text x=336 y=${303-v*2.6} fill="#fff" font-size=11>${v}</text>`).join('')}${LB.sub?'<rect x=282 y=270 width=26 height=26 fill="#999"/>':''}<text x=295 y=20 fill="#fff" text-anchor=middle font-size=12>mL</text></svg></div><div class=pn style="flex:45"><h2>Laboratorio virtual</h2><button onclick="LB.placed=1;render()">1. Poner en balanza</button> <button onclick="LB.sub=1;render()">2. Sumergir en la probeta</button> <button class=n onclick="lnew();render()">Otra pieza</button>
+<table><tr><th>Masa</th><th>V inicial</th><th>V final</th></tr><tr><td>${LB.placed?fmt(o.m)+' g':'?'}</td><td>${LB.v0} mL</td><td>${LB.sub?LB.v0+o.V+' mL':'?'}</td></tr></table>
+<p>Calcula d = m / V (g/cm³):</p><input value="${LB.ans}" oninput="LB.ans=this.value" placeholder="d"><button class=g onclick="lchk()">Comprobar y averiguar el material</button><div class="fb1 hn">${LB.msg||'Tabla: aluminio 2,7 · hierro 7,8 · cobre 8,9 · vidrio 2,5'}</div></div></div>`}
+function lchk(){const o=LB.o;if(!LB.placed||!LB.sub){LB.msg='Primero mide la masa y el volumen.';return render()}const v=parseFloat(LB.ans.replace(',','.'));LB.msg=Math.abs(v-o.d)<=.05*o.d?`✔ d = ${fmt(o.m)} / ${o.V} = ${fmt(o.d)} g/cm³ → ${o.n}.`:`✘ Revisa: V = ${LB.v0+o.V} − ${LB.v0} = ${o.V} cm³ y d = m / V.`;render()}
+const CV={ans:'',a:'',b:'',u:0,x:'d'};
+const CU=[['kg → g',1000],['g → kg',.001],['m³ → cm³',1e6],['cm³ → m³',1e-6],['g/cm³ → kg/m³',1000],['kg/m³ → g/cm³',.001],['mL → cm³',1]];
+function xCalc(){const u=CV.x,A=parseFloat(String(CV.a).replace(',','.')),B=parseFloat(String(CV.b).replace(',','.')),ok=!isNaN(A)&&!isNaN(B),n={d:['m (g)','V (cm³)'],m:['d (g/cm³)','V (cm³)'],V:['m (g)','d (g/cm³)']}[u];
+const r=!ok?'':u=='d'?A/B:u=='m'?A*B:A/B,cv=parseFloat(String(CV.c||'').replace(',','.')),f=CU[CV.u];
+return`<div class=two><div class=pn style="flex:50"><h2>Calculadora</h2>${['d','m','V'].map(x=>`<button class="${u==x?'':'n'}" onclick="CV.x='${x}';render()">Calcular ${x}</button>`).join(' ')}<p class=big>${{d:'d = m / V',m:'m = d × V',V:'V = m / d'}[u]}</p><input placeholder="${n[0]}" value="${CV.a}" oninput="CV.a=this.value"><input placeholder="${n[1]}" value="${CV.b}" oninput="CV.b=this.value" style="margin-top:6px"><button class=g style="margin-top:6px" onclick="render()">Calcular</button>${ok?`<div class="fb1 ok">${u} = ${fmt(r)} ${{d:'g/cm³',m:'g',V:'cm³'}[u]}</div>`:''}</div>
+<div class=pn style="flex:50"><h2>Conversor</h2><select onchange="CV.u=+this.value;render()">${CU.map((x,i)=>`<option value=${i} ${CV.u==i?'selected':''}>${x[0]}</option>`).join('')}</select><input style="margin-top:6px" placeholder="Valor" value="${CV.c||''}" oninput="CV.c=this.value"><button class=g style="margin-top:6px" onclick="render()">Convertir</button>${isNaN(cv)?'':`<div class="fb1 ok">${fmt(cv)} × ${fmt(f[1])} = <b>${fmt(cv*f[1])}</b> (${f[0].split('→')[1].trim()})</div>`}</div></div>`}
+render();
+</script></body></html>
